@@ -9,7 +9,7 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
-// $hash=7863f5701d466f8d5a5c91962e14b14b500315a3$
+// $hash=35a04a700d2ff5b3b02bcdf08071a95e58fd0cd0$
 //
 
 #include "libcef_dll/ctocpp/v8value_ctocpp.h"
@@ -183,6 +183,16 @@ CefRefPtr<CefV8Value> CefV8Value::CreateFunction(
   // Execute
   cef_v8value_t* _retval = cef_v8value_create_function(
       name.GetStruct(), CefV8HandlerCppToC::Wrap(handler));
+
+  // Return type: refptr_same
+  return CefV8ValueCToCpp::Wrap(_retval);
+}
+
+NO_SANITIZE("cfi-icall") CefRefPtr<CefV8Value> CefV8Value::CreatePromise() {
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Execute
+  cef_v8value_t* _retval = cef_v8value_create_promise();
 
   // Return type: refptr_same
   return CefV8ValueCToCpp::Wrap(_retval);
@@ -367,6 +377,20 @@ NO_SANITIZE("cfi-icall") bool CefV8ValueCToCpp::IsFunction() {
 
   // Execute
   int _retval = _struct->is_function(_struct);
+
+  // Return type: bool
+  return _retval ? true : false;
+}
+
+NO_SANITIZE("cfi-icall") bool CefV8ValueCToCpp::IsPromise() {
+  cef_v8value_t* _struct = GetStruct();
+  if (CEF_MEMBER_MISSING(_struct, is_promise))
+    return false;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Execute
+  int _retval = _struct->is_promise(_struct);
 
   // Return type: bool
   return _retval ? true : false;
@@ -847,8 +871,8 @@ NO_SANITIZE("cfi-icall") int CefV8ValueCToCpp::GetArrayLength() {
 }
 
 NO_SANITIZE("cfi-icall")
-CefRefPtr<CefV8ArrayBufferReleaseCallback>
-CefV8ValueCToCpp::GetArrayBufferReleaseCallback() {
+CefRefPtr<CefV8ArrayBufferReleaseCallback> CefV8ValueCToCpp::
+    GetArrayBufferReleaseCallback() {
   cef_v8value_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, get_array_buffer_release_callback))
     return nullptr;
@@ -986,6 +1010,44 @@ CefRefPtr<CefV8Value> CefV8ValueCToCpp::ExecuteFunctionWithContext(
 
   // Return type: refptr_same
   return CefV8ValueCToCpp::Wrap(_retval);
+}
+
+NO_SANITIZE("cfi-icall")
+bool CefV8ValueCToCpp::ResolvePromise(CefRefPtr<CefV8Value> arg) {
+  cef_v8value_t* _struct = GetStruct();
+  if (CEF_MEMBER_MISSING(_struct, resolve_promise))
+    return false;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Unverified params: arg
+
+  // Execute
+  int _retval =
+      _struct->resolve_promise(_struct, CefV8ValueCToCpp::Unwrap(arg));
+
+  // Return type: bool
+  return _retval ? true : false;
+}
+
+NO_SANITIZE("cfi-icall")
+bool CefV8ValueCToCpp::RejectPromise(const CefString& errorMsg) {
+  cef_v8value_t* _struct = GetStruct();
+  if (CEF_MEMBER_MISSING(_struct, reject_promise))
+    return false;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Verify param: errorMsg; type: string_byref_const
+  DCHECK(!errorMsg.empty());
+  if (errorMsg.empty())
+    return false;
+
+  // Execute
+  int _retval = _struct->reject_promise(_struct, errorMsg.GetStruct());
+
+  // Return type: bool
+  return _retval ? true : false;
 }
 
 // CONSTRUCTOR - Do not edit by hand.

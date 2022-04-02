@@ -9,7 +9,7 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
-// $hash=5bf495a6015a7c0937225685bfbe8e0163e67583$
+// $hash=2076cc2d1a2f02995782e56351bdd1ca2e74e907$
 //
 
 #include <dlfcn.h>
@@ -266,6 +266,7 @@ typedef struct _cef_v8value_t* (*cef_v8value_create_array_buffer_ptr)(
 typedef struct _cef_v8value_t* (*cef_v8value_create_function_ptr)(
     const cef_string_t*,
     struct _cef_v8handler_t*);
+typedef struct _cef_v8value_t* (*cef_v8value_create_promise_ptr)();
 typedef struct _cef_v8stack_trace_t* (*cef_v8stack_trace_get_current_ptr)(int);
 typedef struct _cef_value_t* (*cef_value_create_ptr)();
 typedef struct _cef_binary_value_t* (*cef_binary_value_create_ptr)(const void*,
@@ -605,6 +606,7 @@ struct libcef_pointers {
   cef_v8value_create_array_ptr cef_v8value_create_array;
   cef_v8value_create_array_buffer_ptr cef_v8value_create_array_buffer;
   cef_v8value_create_function_ptr cef_v8value_create_function;
+  cef_v8value_create_promise_ptr cef_v8value_create_promise;
   cef_v8stack_trace_get_current_ptr cef_v8stack_trace_get_current;
   cef_value_create_ptr cef_value_create;
   cef_binary_value_create_ptr cef_binary_value_create;
@@ -813,6 +815,7 @@ int libcef_init_pointers(const char* path) {
   INIT_ENTRY(cef_v8value_create_array);
   INIT_ENTRY(cef_v8value_create_array_buffer);
   INIT_ENTRY(cef_v8value_create_function);
+  INIT_ENTRY(cef_v8value_create_promise);
   INIT_ENTRY(cef_v8stack_trace_get_current);
   INIT_ENTRY(cef_value_create);
   INIT_ENTRY(cef_binary_value_create);
@@ -1079,8 +1082,8 @@ int cef_create_url(const struct _cef_urlparts_t* parts, cef_string_t* url) {
 }
 
 NO_SANITIZE("cfi-icall")
-cef_string_userfree_t cef_format_url_for_security_display(
-    const cef_string_t* origin_url) {
+cef_string_userfree_t
+    cef_format_url_for_security_display(const cef_string_t* origin_url) {
   return g_libcef_pointers.cef_format_url_for_security_display(origin_url);
 }
 
@@ -1482,6 +1485,10 @@ struct _cef_v8value_t* cef_v8value_create_function(
   return g_libcef_pointers.cef_v8value_create_function(name, handler);
 }
 
+NO_SANITIZE("cfi-icall") struct _cef_v8value_t* cef_v8value_create_promise() {
+  return g_libcef_pointers.cef_v8value_create_promise();
+}
+
 NO_SANITIZE("cfi-icall")
 struct _cef_v8stack_trace_t* cef_v8stack_trace_get_current(int frame_limit) {
   return g_libcef_pointers.cef_v8stack_trace_get_current(frame_limit);
@@ -1534,46 +1541,54 @@ struct _cef_translator_test_t* cef_translator_test_create() {
 }
 
 NO_SANITIZE("cfi-icall")
-struct _cef_translator_test_ref_ptr_library_t*
-cef_translator_test_ref_ptr_library_create(int value) {
+struct
+    _cef_translator_test_ref_ptr_library_t* cef_translator_test_ref_ptr_library_create(
+        int value) {
   return g_libcef_pointers.cef_translator_test_ref_ptr_library_create(value);
 }
 
 NO_SANITIZE("cfi-icall")
-struct _cef_translator_test_ref_ptr_library_child_t*
-cef_translator_test_ref_ptr_library_child_create(int value, int other_value) {
+struct
+    _cef_translator_test_ref_ptr_library_child_t* cef_translator_test_ref_ptr_library_child_create(
+        int value,
+        int other_value) {
   return g_libcef_pointers.cef_translator_test_ref_ptr_library_child_create(
       value, other_value);
 }
 
 NO_SANITIZE("cfi-icall")
-struct _cef_translator_test_ref_ptr_library_child_child_t*
-cef_translator_test_ref_ptr_library_child_child_create(int value,
-                                                       int other_value,
-                                                       int other_other_value) {
+struct
+    _cef_translator_test_ref_ptr_library_child_child_t* cef_translator_test_ref_ptr_library_child_child_create(
+        int value,
+        int other_value,
+        int other_other_value) {
   return g_libcef_pointers
       .cef_translator_test_ref_ptr_library_child_child_create(
           value, other_value, other_other_value);
 }
 
 NO_SANITIZE("cfi-icall")
-struct _cef_translator_test_scoped_library_t*
-cef_translator_test_scoped_library_create(int value) {
+struct
+    _cef_translator_test_scoped_library_t* cef_translator_test_scoped_library_create(
+        int value) {
   return g_libcef_pointers.cef_translator_test_scoped_library_create(value);
 }
 
 NO_SANITIZE("cfi-icall")
-struct _cef_translator_test_scoped_library_child_t*
-cef_translator_test_scoped_library_child_create(int value, int other_value) {
+struct
+    _cef_translator_test_scoped_library_child_t* cef_translator_test_scoped_library_child_create(
+        int value,
+        int other_value) {
   return g_libcef_pointers.cef_translator_test_scoped_library_child_create(
       value, other_value);
 }
 
 NO_SANITIZE("cfi-icall")
-struct _cef_translator_test_scoped_library_child_child_t*
-cef_translator_test_scoped_library_child_child_create(int value,
-                                                      int other_value,
-                                                      int other_other_value) {
+struct
+    _cef_translator_test_scoped_library_child_child_t* cef_translator_test_scoped_library_child_child_create(
+        int value,
+        int other_value,
+        int other_other_value) {
   return g_libcef_pointers
       .cef_translator_test_scoped_library_child_child_create(value, other_value,
                                                              other_other_value);

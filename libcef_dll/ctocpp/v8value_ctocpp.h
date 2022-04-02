@@ -9,7 +9,7 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
-// $hash=c9725eb41d50cd0bdbe6f84280e0ed7b62012136$
+// $hash=291ba063983ac8b613ebb80053431708eb3f17f7$
 //
 
 #ifndef CEF_LIBCEF_DLL_CTOCPP_V8VALUE_CTOCPP_H_
@@ -47,6 +47,7 @@ class CefV8ValueCToCpp
   bool IsArray() override;
   bool IsArrayBuffer() override;
   bool IsFunction() override;
+  bool IsPromise() override;
   bool IsSame(CefRefPtr<CefV8Value> that) override;
   bool GetBoolValue() override;
   int32 GetIntValue() override;
@@ -91,6 +92,8 @@ class CefV8ValueCToCpp
       CefRefPtr<CefV8Context> context,
       CefRefPtr<CefV8Value> object,
       const CefV8ValueList& arguments) override;
+  bool ResolvePromise(CefRefPtr<CefV8Value> arg) override;
+  bool RejectPromise(const CefString& errorMsg) override;
 };
 
 #endif  // CEF_LIBCEF_DLL_CTOCPP_V8VALUE_CTOCPP_H_

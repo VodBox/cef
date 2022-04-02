@@ -33,7 +33,7 @@
 // by hand. See the translator.README.txt file in the tools directory for
 // more information.
 //
-// $hash=b7dd2429f492a8f2dd978f9500c63dd0e01035d4$
+// $hash=a452b851c72f41ac0b4d55359afe3daed11d8dab$
 //
 
 #ifndef CEF_INCLUDE_CAPI_CEF_V8_CAPI_H_
@@ -455,6 +455,11 @@ typedef struct _cef_v8value_t {
   int(CEF_CALLBACK* is_function)(struct _cef_v8value_t* self);
 
   ///
+  // True if the value type is Promise.
+  ///
+  int(CEF_CALLBACK* is_promise)(struct _cef_v8value_t* self);
+
+  ///
   // Returns true (1) if this object is pointing to the same handle as |that|
   // object.
   ///
@@ -728,6 +733,27 @@ typedef struct _cef_v8value_t {
       struct _cef_v8value_t* object,
       size_t argumentsCount,
       struct _cef_v8value_t* const* arguments);
+
+  ///
+  // Resolve the Promise using the current V8 context. This function should only
+  // be called from within the scope of a cef_v8handler_t or cef_v8accessor_t
+  // callback, or in combination with calling enter() and exit() on a stored
+  // cef_v8context_t reference. |arg| is the argument passed to the resolved
+  // promise. Returns true (1) on success. Returns false (0) if this function is
+  // called incorrectly or an exception is thrown.
+  ///
+  int(CEF_CALLBACK* resolve_promise)(struct _cef_v8value_t* self,
+                                     struct _cef_v8value_t* arg);
+
+  ///
+  // Reject the Promise using the current V8 context. This function should only
+  // be called from within the scope of a cef_v8handler_t or cef_v8accessor_t
+  // callback, or in combination with calling enter() and exit() on a stored
+  // cef_v8context_t reference. Returns true (1) on success. Returns false (0)
+  // if this function is called incorrectly or an exception is thrown.
+  ///
+  int(CEF_CALLBACK* reject_promise)(struct _cef_v8value_t* self,
+                                    const cef_string_t* errorMsg);
 } cef_v8value_t;
 
 ///
@@ -817,6 +843,14 @@ CEF_EXPORT cef_v8value_t* cef_v8value_create_array_buffer(
 ///
 CEF_EXPORT cef_v8value_t* cef_v8value_create_function(const cef_string_t* name,
                                                       cef_v8handler_t* handler);
+
+///
+// Create a new cef_v8value_t object of type Promise. This function should only
+// be called from within the scope of a cef_render_process_handler_t,
+// cef_v8handler_t or cef_v8accessor_t callback, or in combination with calling
+// enter() and exit() on a stored cef_v8context_t reference.
+///
+CEF_EXPORT cef_v8value_t* cef_v8value_create_promise(void);
 
 ///
 // Structure representing a V8 stack trace handle. V8 handles can only be
